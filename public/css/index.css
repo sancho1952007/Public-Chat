@@ -1,0 +1,184 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@100;400;500&display=swap');
+
+body {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    user-select: none;
+    font-family: 'Barlow', sans-serif;
+    overflow: hidden;
+}
+
+#splash-screen {
+    width: 100%;
+    height: 100vh;
+    position: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    pointer-events: none;
+    z-index: 9999;
+}
+
+#splash-screen b {
+    font-size: 40px;
+    margin-top: 10px;
+}
+
+#header {
+    width: 100%;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    backdrop-filter: blur(10px);
+    position: fixed;
+    top: 0;
+}
+
+#header-left,
+#header-center,
+#header-right {
+    width: calc(100%/3 - 20px);
+    display: flex;
+}
+
+#header-center {
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+#header-left {
+    align-items: center;
+    padding-left: 10px;
+}
+
+#header-right {
+    align-items: center;
+    justify-content: end;
+    padding-right: 10px;
+}
+
+#logout {
+    background-color: red;
+    color: white;
+    padding: 5px;
+    font-size: 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all .10s linear;
+}
+
+#logout:active {
+    background-color: rgb(192, 1, 1);
+}
+
+#container {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+}
+
+#chats {
+    height: calc(100% - 60px);
+    overflow: auto;
+}
+
+.chat {
+    width: fit-content;
+    padding: 10px;
+    border-radius: 5px;
+    max-width: calc(100% - 7em);
+    margin-bottom: 10px;
+}
+
+.chat:first-child {
+    margin-top: 50px;
+}
+
+.chat.opp {
+    background-color: blue;
+    color: white;
+    margin-left: 10px;
+    float: left;
+    clear: both;
+}
+
+.chat.my {
+    background-color: rgb(91, 91, 91);
+    color: white;
+    float: right;
+    margin-right: 10px;
+    clear: both;
+}
+
+.chat .content {
+    font-size: 20px;
+    word-break: break-word;
+}
+
+.chat .person {
+    color: rgb(223, 223, 223);
+    font-size: 13px;
+}
+
+.chat .time {
+    width: 100%;
+    text-align: right;
+    font-size: 10px;
+}
+
+#your-chat {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#chat-input {
+    width: calc(100% - 90px);
+    height: 30px;
+    padding: 10px;
+    font-size: 17px;
+    border-right: 0;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    font-family: 'Barlow', sans-serif;
+}
+
+#send-btn {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#send-btn svg {
+    width: 35px;
+    height: 35px;
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+* {
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}

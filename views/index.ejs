@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Public Chat</title>
+    <script src="https://livejs.com/live.js"></script>
+    <link rel="manifest" href="/manifest.json">
+    <link rel="stylesheet" href="/css/index.css">
+    <meta name="theme-color" content="black">
+    <link rel="stylesheet" href="/css/index/<%= theme %>.css">
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
+</head>
+
+<body>
+    <div id="splash-screen">
+        <img src="/images/icon-128x128.png" alt="">
+        <b>Public Chat</b>
+    </div>
+
+    <div id="container">
+        <div id="header">
+            <div id="header-left">
+                <% if (theme=='dark' ) { %>
+                    <input type="checkbox" id="enable-darkmode" checked>
+                    <% } else { %>
+                        <input type="checkbox" id="enable-darkmode">
+                        <% } %>
+
+                            <label for="enable-darkmode">Dark
+                                Mode</label>
+            </div>
+            <div id="header-center"><b>Public Chat</b></div>
+            <div id="header-right">
+                <div id="logout">Logout</div>
+            </div>
+        </div>
+        <div id="chats">
+            <!-- <div class="chat opp">
+                <div class="person">Sancho</div>
+                <div class="content">Hi Frienofekfefepfjekpfejfefkelw]kfvonwp]fvkwrofpv]mwrkofwr]kfworp]iwkopbwr]imds!
+                </div>
+                <div class="time">12:00</div>
+            </div>
+            <div class="chat my">
+                <div class="person">Sancho</div>
+                <div class="content">Hi Friends!</div>
+                <div class="time">01:00</div>
+            </div> -->
+        </div>
+        <div id="your-chat">
+            <input maxlength="300" type="text" id="chat-input" placeholder="Share Your Thoughts..." autocomplete="off">
+
+            <div id="send-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"
+                    width="256" height="256" viewBox="0 0 256 256" xml:space="preserve">
+
+                    <defs>
+                    </defs>
+                    <g style="stroke: none; stroke-width: 0; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: none; fill-rule: nonzero; opacity: 1;"
+                        transform="translate(1.4065934065934016 1.4065934065934016) scale(2.81 2.81)">
+                        <polygon points="0,14.69 0,39.65 51,45 0,50.35 0,75.31 90,45 "
+                            style="stroke: none; stroke-width: 1; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: rgb(0,0,0); fill-rule: nonzero; opacity: 1;"
+                            transform="  matrix(1 0 0 1 0 0) " />
+                    </g>
+                </svg>
+            </div>
+
+        </div>
+    </div>
+</body>
+
+<script>
+    (() => {
+        // Connec to backend socket.io server
+        const socket = io.connect();
+
+        // Assign required vaiables
+        let MyID;
+        let lastTS;
+        let chatRequestSent = true;
+        let firstRequest = true;
+        let end = false;
+        let lookForOnFocus = false;
+
+        // Reload the socket.io connection to include the cookies when user returns from google auth prompt
+        window.onfocus = () => {
+            if (lookForOnFocus == true) {
+                // Check if user really loggedin by checking for id cookie set by server on login
+                let myid = Cookies.get('id');
+                socket.disconnect();
+                socket.connect();
+                if (myid != null) {
+                    document.querySelectorAll('.chat.opp').forEach(chat => {
+                        if (chat.getAttribute('user-id') != null && chat.getAttribute('user-id') == myid) {
+                            chat.classList.remove('opp');
+                            chat.classList.add('my');
+                        }
+                    });
+                }
+
+                lookForOnFocus = false;
+            }
+        }
+
+        // Handle in case server requests logout
+        socket.on('log-out', () => {
+            Cookies.remove('id');
+            Cookies.remove('session');
+        });
+
+        // Handle any message the server wants to display
+        socket.on('display-message', (msg) => {
+            alert(msg);
+        });
+
+        // Handle chats supplied by the server
+        socket.on('chats', (chats) => {
+            console.log(chats);
+            if (document.querySelector('#splash-screen') != null) {
+                document.querySelector('#splash-screen').style.animation = 'fadeOut .5s linear';
+                document.querySelector('#splash-screen').onanimationend = () => {
+                    document.querySelector('#splash-screen').remove();
+                }
+            }
+
+            if (chats.length <= 10) {
+                end = true;
+            }
+
+            chatRequestSent = false;
+            for (chat of chats) {
+                if (document.getElementById(chat._id) == null) {
+                    lastTS = chat.ts;
+                    const chatDiv = document.createElement('div');
+                    chatDiv.setAttribute('user-id', chat.userID);
+                    chatDiv.id = chat._id;
+
+                    MyID = Cookies.get('id');
+                    const chatUser = document.createElement('div');
+                    chatUser.className = 'person';
+                    chatUser.innerText = chat.name;
+                    if (MyID != null && chat.userID == MyID) {
+                        chatDiv.className = 'chat my';
+                    } else {
+                        chatDiv.className = 'chat opp';
+                    }
+
+                    const chatContent = document.createElement('div');
+                    chatContent.className = 'content';
+                    chatContent.innerText = chat.content.text;
+
+                    const chatTime = document.createElement('div');
+                    chatTime.className = 'time';
+                    chatTime.innerText = new Date(chat.ts).toLocaleString();
+
+                    chatDiv.appendChild(chatUser);
+                    chatDiv.appendChild(chatContent);
+                    chatDiv.appendChild(chatTime);
+
+                    document.querySelector('#chats').prepend(chatDiv);
+                }
+
+            }
+            listenForLongtaps();
+
+            if (firstRequest == true) {
+                document.querySelector('#chats').scrollTop = document.querySelector('#chats').scrollHeight;
+                firstRequest = false;
+            }
+        });
+
+        // Check if user has scrolled to top to see older chats
+        document.querySelector('#chats').onscroll = () => {
+            if (document.querySelector('#chats').scrollTop < 400) {
+                if (end == false) {
+                    if (chatRequestSent == false) {
+                        socket.emit('request-chats', lastTS);
+                        chatRequestSent = true;
+                    }
+                }
+            }
+        }
+
+        // Handle new chat received from server
+        socket.on('chat', (chat) => {
+            if (document.getElementById(chat._id) == null) {
+                const chatDiv = document.createElement('div');
+                chatDiv.setAttribute('user-id', chat.userID);
+                chatDiv.id = chat._id;
+
+                const chatUser = document.createElement('div');
+                chatUser.className = 'person';
+                chatUser.innerText = chat.name;
+
+                MyID = Cookies.get('id');
+                if (MyID != null && chat.userID == MyID) {
+                    chatDiv.className = 'chat my';
+                } else {
+                    chatDiv.className = 'chat opp';
+                }
+                const chatContent = document.createElement('div');
+                chatContent.className = 'content';
+                chatContent.innerText = chat.content.text;
+
+                const chatTime = document.createElement('div');
+                chatTime.className = 'time';
+                chatTime.innerText = new Date(chat.ts).toLocaleString();
+
+                chatDiv.appendChild(chatUser);
+                chatDiv.appendChild(chatContent);
+                chatDiv.appendChild(chatTime);
+
+                document.querySelector('#chats').appendChild(chatDiv);
+
+                if ((document.querySelector('#chats').scrollHeight - 20) < (document.querySelector('#chats').scrollTop + document.querySelector('#chats').offsetHeight) + chatDiv.offsetHeight) {
+                    document.querySelector('#chats').scrollTop = document.querySelector('#chats').scrollHeight;
+                }
+            }
+            listenForLongtaps();
+        });
+
+        socket.on('update-message', data => {
+            const elem = document.querySelector('#' + CSS.escape(data.id) + ' .content')
+            if (elem != null) {
+                elem.innerText = data.content.text;
+            }
+        });
+
+        document.querySelector('body').style.height = window.innerHeight + 'px';
+        window.onresize = () => {
+            document.querySelector('body').style.height = window.innerHeight + 'px';
+        }
+
+        // Handle change in theme powered by the checkbox
+        document.querySelector('#enable-darkmode').onchange = () => {
+            const isChecked = document.querySelector('#enable-darkmode').checked;
+            if (isChecked) {
+                // Request to set theme cookie to the server as js-cookie is having problem with cookie expiration
+                fetch('/set/theme/dark');
+                const newMode = document.createElement('link');
+                newMode.rel = 'stylesheet';
+                newMode.href = '/css/index/dark.css';
+                newMode.onload = () => {
+                    try { document.querySelector('link[href="/css/index/light.css"]').remove(); } catch { }
+                }
+                document.head.appendChild(newMode);
+            } else {
+                // Request to set theme cookie to the server as js-cookie is having problem with cookie expiration
+                fetch('/set/theme/light');
+                const newMode = document.createElement('link');
+                newMode.rel = 'stylesheet';
+                newMode.href = '/css/index/light.css';
+                newMode.onload = () => {
+                    try { document.querySelector('link[href="/css/index/dark.css"]').remove(); } catch { }
+                }
+                document.head.appendChild(newMode);
+            }
+        }
+
+        // Send message functon
+        const doSend = () => {
+            if (Cookies.get('session') != null) {
+                const content = document.querySelector('#chat-input').value;
+                if (content != null && content.trim() != '') {
+                    socket.emit('message', content);
+                    document.querySelector('#chat-input').value = '';
+                }
+            } else {
+                let confirmation = confirm('Please Login With Google To Continue. Press OK To Continue.');
+                if (confirmation != null && confirmation == true) {
+                    window.open('/auth', '_blank');
+                    lookForOnFocus = true;
+                }
+            }
+        }
+
+        document.querySelector('#send-btn').onclick = () => {
+            doSend();
+        }
+
+        document.querySelector('#chat-input').onkeydown = (key) => {
+            if (key.keyCode == 13) {
+                doSend();
+            }
+        }
+
+        document.querySelector('#logout').onclick = () => {
+            const confirmation = confirm('Are you sure you want to log out?');
+            if (confirmation != null && confirmation == true) {
+                Cookies.remove('session');
+                Cookies.remove('id');
+            }
+        }
+
+        const listenForLongtaps = () => {
+            document.querySelectorAll('.chat.my').forEach(elem => {
+                elem.oncontextmenu = (e) => {
+                    e.preventDefault();
+                    const confirmation = confirm('Delete Message?');
+                    if (confirmation != null && confirmation == true) {
+                        socket.emit('delete', e.currentTarget.id);
+                    }
+                }
+            });
+        }
+    })();
+</script>
+
+</html>
