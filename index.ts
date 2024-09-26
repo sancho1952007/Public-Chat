@@ -6,7 +6,7 @@ import crypto from 'crypto';
 import dotenv from 'dotenv';
 import express from 'express';
 import JWT from 'jsonwebtoken';
-import mongoose from 'mongoose';
+import mongoose, { Document } from 'mongoose';
 import passport from 'passport';
 import { Server } from 'socket.io';
 import favicon from 'serve-favicon';
@@ -112,17 +112,21 @@ io.on('connection', async (socket) => {
                             const ts = new Date().valueOf();
 
                             // Check if more than 10K documents are present and delete the older ones if it crosses 10K
-                            const DocumentCount = await Chat.countDocuments({});
-                            if (DocumentCount >= 10000) {
-                                // Find the oldest chat since the limit is 5000
-                                Chat.findOne({}).sort({ ts: 1 }).limit(1).then(
-                                    async oldestChat => {
-                                        if (oldestChat != null) {
-                                            // Delete the oldest chat
-                                            await Chat.deleteOne({ _id: oldestChat._id });
-                                        }
-                                    });
-                            }
+                            Chat.countDocuments({}).then(
+                                DocumentCount => {
+                                    if (DocumentCount >= 10000) {
+                                        // Find the oldest chat since the limit is 5000
+                                        Chat.findOne({}).sort({ ts: 1 }).limit(1).then(
+                                            async oldestChat => {
+                                                if (oldestChat != null) {
+                                                    // Delete the oldest chat
+                                                    await Chat.deleteOne({ _id: oldestChat._id });
+                                                }
+                                            });
+                                    }
+                                }
+                            );
+
 
                             // Store the message in the database
                             const messageID = crypto.randomUUID().replaceAll('-', '');
