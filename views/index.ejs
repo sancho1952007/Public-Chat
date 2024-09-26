@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Public Chat</title>
-    <script src="https://livejs.com/live.js"></script>
+    <!-- <script src="https://livejs.com/live.js"></script> -->
     <link rel="manifest" href="/manifest.json">
     <link rel="stylesheet" href="/css/index.css">
     <meta name="theme-color" content="black">
@@ -67,7 +67,10 @@
                     </g>
                 </svg>
             </div>
+        </div>
 
+        <div id="credit">Made with ❤️ by
+            <a href="https://sancho1952007.github.io/" target="_blank">Sancho Godinho</a>
         </div>
     </div>
 </body>
@@ -85,23 +88,30 @@
         let end = false;
         let lookForOnFocus = false;
 
+        document.addEventListener('cookiechange', ({ detail: { oldValue, newValue } }) => {
+            console.log(`Cookie changed from "${oldValue}" to "${newValue}"`);
+        });
+
         // Reload the socket.io connection to include the cookies when user returns from google auth prompt
         window.onfocus = () => {
+            console.log('Focused ' + new Date().toLocaleTimeString());
             if (lookForOnFocus == true) {
                 // Check if user really loggedin by checking for id cookie set by server on login
                 let myid = Cookies.get('id');
-                socket.disconnect();
-                socket.connect();
-                if (myid != null) {
-                    document.querySelectorAll('.chat.opp').forEach(chat => {
-                        if (chat.getAttribute('user-id') != null && chat.getAttribute('user-id') == myid) {
-                            chat.classList.remove('opp');
-                            chat.classList.add('my');
-                        }
-                    });
-                }
+                setTimeout(() => {
+                    socket.disconnect();
+                    socket.connect();
+                    if (myid != null) {
+                        document.querySelectorAll('.chat.opp').forEach(chat => {
+                            if (chat.getAttribute('user-id') != null && chat.getAttribute('user-id') == myid) {
+                                chat.classList.remove('opp');
+                                chat.classList.add('my');
+                            }
+                        });
+                    }
 
-                lookForOnFocus = false;
+                    lookForOnFocus = false;
+                }, 500);
             }
         }
 
@@ -159,7 +169,6 @@
                     chatDiv.appendChild(chatUser);
                     chatDiv.appendChild(chatContent);
                     chatDiv.appendChild(chatTime);
-
                     document.querySelector('#chats').prepend(chatDiv);
                 }
 

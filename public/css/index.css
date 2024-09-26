@@ -84,7 +84,7 @@ body {
 }
 
 #chats {
-    height: calc(100% - 60px);
+    height: calc(100% - 75px);
     overflow: auto;
 }
 
@@ -166,6 +166,17 @@ body {
 #send-btn svg {
     width: 35px;
     height: 35px;
+}
+
+#credit {
+    width: 100%;
+    text-align: center;
+}
+
+a[href] {
+    all: unset;
+    color: blue;
+    cursor: pointer;
 }
 
 @keyframes fadeOut {
