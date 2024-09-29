@@ -1,0 +1,88 @@
+@media screen and (prefers-color-scheme:dark) {
+    body {
+        color: white;
+    }
+
+    #splash-screen {
+        background-color: rgb(16, 16, 16);
+    }
+
+    #container {
+        background-color: black;
+    }
+
+    #header {
+        background-color: rgb(28, 28, 28, 0.5);
+    }
+
+    #chat-input {
+        background-color: rgb(49, 49, 49);
+        color: white;
+        border: 1px solid rgb(112, 112, 112);
+    }
+
+    #send-btn {
+        background-color: rgb(58, 58, 58);
+        border: 1px solid rgb(112, 112, 112);
+        transition: all .10s linear;
+    }
+
+    #send-btn:active {
+        background-color: rgb(49, 49, 49);
+    }
+
+    #send-btn svg {
+        filter: invert(1);
+    }
+
+    #extras-dialogue {
+        background-color: rgb(28, 28, 28);
+        border-color: rgb(211, 211, 211) !important;
+    }
+
+    #select-theme {
+        background-color: black;
+        color: white;
+    }
+}
+
+@media screen and (prefers-color-scheme:light) {
+    body {
+        color: black;
+    }
+
+    #splash-screen {
+        background-color: white;
+    }
+
+    #container {
+        background-color: white;
+    }
+
+    #header {
+        background-color: rgb(213, 213, 213, 0.5);
+    }
+
+    #chat-input {
+        background-color: rgb(213, 213, 213);
+        border: 1px solid rgb(112, 112, 112);
+    }
+
+    #send-btn {
+        background-color: rgb(213, 213, 213);
+        border: 1px solid rgb(112, 112, 112);
+        transition: all .10s linear;
+    }
+
+    #send-btn:active {
+        background-color: rgb(190, 190, 190);
+    }
+
+    .chat.my {
+        background-color: grey;
+    }
+
+    #extras-dialogue {
+        border-color: black;
+    }
+}

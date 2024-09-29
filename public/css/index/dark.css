@@ -33,3 +33,13 @@ body {
 #send-btn svg {
     filter: invert(1);
 }
+
+#extras-dialogue {
+    background-color: rgb(28, 28, 28);
+    border-color: rgb(211, 211, 211) !important;
+}
+
+#select-theme {
+    background-color: black;
+    color: white;
+}

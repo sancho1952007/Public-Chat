@@ -3,14 +3,14 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Public Chat</title>
     <!-- <script src="https://livejs.com/live.js"></script> -->
     <link rel="manifest" href="/manifest.json">
     <link rel="stylesheet" href="/css/index.css">
     <meta name="theme-color" content="black">
-    <link rel="stylesheet" href="/css/index/<%= theme %>.css">
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+    <link rel="stylesheet" href="/css/index/<%= theme %>.css" id="theme-css">
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.5/dist/js.cookie.min.js"></script>
 </head>
 
@@ -20,43 +20,66 @@
         <b>Public Chat</b>
     </div>
 
-    <div id="container">
-        <div id="header">
-            <div id="header-left">
-                <% if (theme=='dark' ) { %>
-                    <input type="checkbox" id="enable-darkmode" checked>
-                    <% } else { %>
-                        <input type="checkbox" id="enable-darkmode">
-                        <% } %>
-
-                            <label for="enable-darkmode">Dark
-                                Mode</label>
+    <!-- Extra options dialogue -->
+    <div id="extras-dialogue">
+        <div class="extras-option">
+            <div style="width:100%;">
+                Theme:
+                <select id="select-theme" style="width:100%;padding:5px;">
+                    <option value="auto" <%=theme=='auto' ? 'selected' : '' %>>Auto</option>
+                    <option value="light" <%=theme=='light' ? 'selected' : '' %>>Light</option>
+                    <option value="dark" <%=theme=='dark' ? 'selected' : '' %>>Dark</option>
+                </select>
             </div>
+        </div>
+        <div class="extras-option" style="font-size:14px;">
+            <div>
+                <a href="https://github.com/sancho1952007/Public-Chat/" target="_blank">View Source Code On Github</a>
+            </div>
+        </div>
+        <div class="extras-option" style="font-size:14px;">
+            <div>
+                Made With ❤️ by <a href="https://sancho1952007.github.io/" target="_blank">Sancho Godinho</a>
+            </div>
+        </div>
+        <div class="extras-option" id="install-btn" style="cursor:pointer;display:none;">
+            Install App
+        </div>
+
+    </div>
+
+    <div id="container">
+        <!-- In-Site header -->
+        <div id="header">
+            <!-- Left part of the header -->
+            <div id="header-left">
+                <div id="open-extras">
+                    <img src="https://img.icons8.com/fluency-systems-filled/20/plus-math.png" alt="more-options" />
+                </div>
+            </div>
+
+            <!-- Center part of the header -->
             <div id="header-center"><b>Public Chat</b></div>
+
+            <!-- Right part of the header -->
             <div id="header-right">
                 <div id="logout">Logout</div>
             </div>
         </div>
-        <div id="chats">
-            <!-- <div class="chat opp">
-                <div class="person">Sancho</div>
-                <div class="content">Hi Frienofekfefepfjekpfejfefkelw]kfvonwp]fvkwrofpv]mwrkofwr]kfworp]iwkopbwr]imds!
-                </div>
-                <div class="time">12:00</div>
-            </div>
-            <div class="chat my">
-                <div class="person">Sancho</div>
-                <div class="content">Hi Friends!</div>
-                <div class="time">01:00</div>
-            </div> -->
-        </div>
+
+        <!-- All chats will be displayed inside this parent element -->
+        <div id="chats"></div>
+
+        <!-- Your chat area -->
         <div id="your-chat">
+            <!-- Input for your chat -->
             <input maxlength="300" type="text" id="chat-input" placeholder="Share Your Thoughts..." autocomplete="off">
 
+            <!-- Send button -->
             <div id="send-btn">
+                <!-- SVG for send icon -->
                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"
                     width="256" height="256" viewBox="0 0 256 256" xml:space="preserve">
-
                     <defs>
                     </defs>
                     <g style="stroke: none; stroke-width: 0; stroke-dasharray: none; stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10; fill: none; fill-rule: nonzero; opacity: 1;"
@@ -67,10 +90,6 @@
                     </g>
                 </svg>
             </div>
-        </div>
-
-        <div id="credit">Made with ❤️ by
-            <a href="https://sancho1952007.github.io/" target="_blank">Sancho Godinho</a>
         </div>
     </div>
 </body>
@@ -88,13 +107,24 @@
         let end = false;
         let lookForOnFocus = false;
 
-        document.addEventListener('cookiechange', ({ detail: { oldValue, newValue } }) => {
-            console.log(`Cookie changed from "${oldValue}" to "${newValue}"`);
+        // Handle to get accurate body height and prevent any extra space considerations on screen
+        document.querySelector('body').style.height = window.innerHeight + 'px';
+        window.onresize = () => {
+            document.querySelector('body').style.height = window.innerHeight + 'px';
+        }
+
+        // Handle Install PWA button
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.querySelector('#install-btn').style.display = 'block';
         });
+
+        document.querySelector('#install-btn').onclick = () => { deferredPrompt.prompt(); }
 
         // Reload the socket.io connection to include the cookies when user returns from google auth prompt
         window.onfocus = () => {
-            console.log('Focused ' + new Date().toLocaleTimeString());
             if (lookForOnFocus == true) {
                 // Check if user really loggedin by checking for id cookie set by server on login
                 let myid = Cookies.get('id');
@@ -108,10 +138,12 @@
                                 chat.classList.add('my');
                             }
                         });
+                        lookForOnFocus = false;
+                        document.querySelector('#chat-input').readOnly = false;
                     }
-
-                    lookForOnFocus = false;
-                }, 500);
+                }, 3000);
+            } else {
+                document.querySelector('#chat-input').readOnly = false;
             }
         }
 
@@ -128,7 +160,6 @@
 
         // Handle chats supplied by the server
         socket.on('chats', (chats) => {
-            console.log(chats);
             if (document.querySelector('#splash-screen') != null) {
                 document.querySelector('#splash-screen').style.animation = 'fadeOut .5s linear';
                 document.querySelector('#splash-screen').onanimationend = () => {
@@ -136,6 +167,7 @@
                 }
             }
 
+            // Check if user reached the end of chats
             if (chats.length <= 10) {
                 end = true;
             }
@@ -151,7 +183,19 @@
                     MyID = Cookies.get('id');
                     const chatUser = document.createElement('div');
                     chatUser.className = 'person';
-                    chatUser.innerText = chat.name;
+
+                    const chatUserName = document.createElement('div');
+                    chatUserName.className = 'name';
+                    chatUserName.innerText = chat.name;
+                    chatUser.appendChild(chatUserName);
+
+                    if (chat.extras.includes('verified')) {
+                        const verifiedBadge = document.createElement('img');
+                        verifiedBadge.className = 'verified-logo';
+                        verifiedBadge.src = 'https://img.icons8.com/color/48/verified-account--v1.png'
+                        chatUserName.appendChild(verifiedBadge);
+                    }
+
                     if (MyID != null && chat.userID == MyID) {
                         chatDiv.className = 'chat my';
                     } else {
@@ -202,7 +246,20 @@
 
                 const chatUser = document.createElement('div');
                 chatUser.className = 'person';
-                chatUser.innerText = chat.name;
+                // chatUser.innerText = chat.name;
+
+
+                const chatUserName = document.createElement('div');
+                chatUserName.className = 'name';
+                chatUserName.innerText = chat.name;
+                chatUser.appendChild(chatUserName);
+
+                if (chat.extras.includes('verified')) {
+                    const verifiedBadge = document.createElement('img');
+                    verifiedBadge.className = 'verified-logo';
+                    verifiedBadge.src = 'https://img.icons8.com/color/48/verified-account--v1.png'
+                    chatUserName.appendChild(verifiedBadge);
+                }
 
                 MyID = Cookies.get('id');
                 if (MyID != null && chat.userID == MyID) {
@@ -238,35 +295,31 @@
             }
         });
 
-        document.querySelector('body').style.height = window.innerHeight + 'px';
-        window.onresize = () => {
-            document.querySelector('body').style.height = window.innerHeight + 'px';
+        // Handle Open Extras (+) button on the top-left
+        document.querySelector('#open-extras').onclick = () => {
+            if (document.querySelector('#extras-dialogue').offsetHeight == 0) {
+                document.querySelector('#extras-dialogue').style.border = '1px solid';
+                document.querySelector('#extras-dialogue').style.height = document.querySelector('#extras-dialogue').scrollHeight + 'px';
+                document.querySelector('#open-extras>img').style.rotate = '45deg';
+            } else {
+                document.querySelector('#extras-dialogue').style.border = '0px solid';
+                document.querySelector('#extras-dialogue').style.height = '0px';
+                document.querySelector('#open-extras>img').style.rotate = '0deg';
+            }
         }
 
-        // Handle change in theme powered by the checkbox
-        document.querySelector('#enable-darkmode').onchange = () => {
-            const isChecked = document.querySelector('#enable-darkmode').checked;
-            if (isChecked) {
-                // Request to set theme cookie to the server as js-cookie is having problem with cookie expiration
-                fetch('/set/theme/dark');
-                const newMode = document.createElement('link');
-                newMode.rel = 'stylesheet';
-                newMode.href = '/css/index/dark.css';
-                newMode.onload = () => {
-                    try { document.querySelector('link[href="/css/index/light.css"]').remove(); } catch { }
-                }
-                document.head.appendChild(newMode);
-            } else {
-                // Request to set theme cookie to the server as js-cookie is having problem with cookie expiration
-                fetch('/set/theme/light');
-                const newMode = document.createElement('link');
-                newMode.rel = 'stylesheet';
-                newMode.href = '/css/index/light.css';
-                newMode.onload = () => {
-                    try { document.querySelector('link[href="/css/index/dark.css"]').remove(); } catch { }
-                }
-                document.head.appendChild(newMode);
+        // Handle change in theme powered by the <select> element
+        document.querySelector('#select-theme').onchange = () => {
+            const newTheme = document.querySelector('#select-theme').value;
+            // Request to set theme cookie to the server as js-cookie is having problem with cookie expiration
+            fetch('/set/theme/' + newTheme);
+            const newMode = document.createElement('link');
+            newMode.rel = 'stylesheet';
+            newMode.href = '/css/index/' + newTheme + '.css';
+            newMode.onload = () => {
+                try { document.querySelector('#theme-css').remove(); } catch { }
             }
+            document.head.appendChild(newMode);
         }
 
         // Send message functon
@@ -274,28 +327,36 @@
             if (Cookies.get('session') != null) {
                 const content = document.querySelector('#chat-input').value;
                 if (content != null && content.trim() != '') {
-                    socket.emit('message', content);
-                    document.querySelector('#chat-input').value = '';
+                    if (content.match(/\b(?!https?:\/\/)[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(?:\.[a-zA-Z]{2,})?\b/g) == null) {
+                        socket.emit('message', content);
+                        document.querySelector('#chat-input').value = '';
+                    } else {
+                        alert('Sorry, URLs are not allowed');
+                    }
                 }
             } else {
                 let confirmation = confirm('Please Login With Google To Continue. Press OK To Continue.');
                 if (confirmation != null && confirmation == true) {
                     window.open('/auth', '_blank');
                     lookForOnFocus = true;
+                    document.querySelector('#chat-input').readOnly = true;
                 }
             }
         }
 
+        // Check if the send button was pressed
         document.querySelector('#send-btn').onclick = () => {
             doSend();
         }
 
+        // Check if the enter key was pressed in the input and if it was, send the message
         document.querySelector('#chat-input').onkeydown = (key) => {
             if (key.keyCode == 13) {
                 doSend();
             }
         }
 
+        // Handle logout button click
         document.querySelector('#logout').onclick = () => {
             const confirmation = confirm('Are you sure you want to log out?');
             if (confirmation != null && confirmation == true) {
@@ -304,6 +365,7 @@
             }
         }
 
+        // Handle long taps to delete messages
         const listenForLongtaps = () => {
             document.querySelectorAll('.chat.my').forEach(elem => {
                 elem.oncontextmenu = (e) => {

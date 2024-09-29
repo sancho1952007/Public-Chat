@@ -32,3 +32,7 @@ body {
 .chat.my {
     background-color: grey;
 }
+
+#extras-dialogue {
+    border-color: black;
+}
