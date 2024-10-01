@@ -346,6 +346,7 @@
             // Request to set theme cookie to the server as js-cookie is having problem with cookie expiration
             fetch('/set/theme/' + newTheme);
             const newMode = document.createElement('link');
+            newMode.id = 'theme-css';
             newMode.rel = 'stylesheet';
             newMode.href = '/css/index/' + newTheme + '.css';
             newMode.onload = () => {
