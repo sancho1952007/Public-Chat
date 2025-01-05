@@ -385,6 +385,11 @@ app.get('/set/theme/:mode', (req, res) => {
     res.end();
 });
 
+// Ping requests
+app.get('/ping', (req, res) => {
+    res.send('OK');
+});
+
 // Redirect all unknown pages to / (404 not found case)
 app.all('*', (req, res) => {
     res.redirect('/');
