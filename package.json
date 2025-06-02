@@ -1,18 +1,19 @@
 {
   "scripts": {
     "dev": "bun --watch index.ts",
-    "web": "loophole http 3000 --hostname public-chat"
+    "web": "loophole http 3000 --hostname public-chat",
+    "start": "bun index.ts"
   },
   "dependencies": {
-    "@gradio/client": "^1.10.0",
-    "@types/express": "^4.17.21",
+    "@gradio/client": "^1.15.1",
+    "@types/express": "^4.17.22",
     "cookie": "^0.6.0",
     "cookie-parser": "^1.4.7",
-    "dotenv": "^16.4.7",
+    "dotenv": "^16.5.0",
     "ejs": "^3.1.10",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.9.6",
+    "mongoose": "^8.15.1",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "serve-favicon": "^2.5.0",
@@ -20,8 +21,8 @@
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.8",
-    "@types/jsonwebtoken": "^9.0.8",
-    "@types/node": "^22.13.1",
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/node": "^22.15.29",
     "@types/passport": "^1.0.17",
     "@types/passport-google-oauth20": "^2.0.16",
     "@types/serve-favicon": "^2.5.7"
