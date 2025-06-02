@@ -1,6 +1,9 @@
 # Use the official Bun image
 FROM oven/bun:latest
 
+# Install system dependencies for node-gyp
+RUN apt-get update && apt-get install -y python3 build-essential
+
 # Set working directory
 WORKDIR /app
 
