@@ -26,5 +26,8 @@
     "@types/passport": "^1.0.17",
     "@types/passport-google-oauth20": "^2.0.16",
     "@types/serve-favicon": "^2.5.7"
-  }
+  },
+  "trustedDependencies": [
+    "bufferutil"
+  ]
 }

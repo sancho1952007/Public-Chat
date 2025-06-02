@@ -1,21 +1,20 @@
-FROM oven/bun
+# Use the official Bun image
+FROM oven/bun:latest
 
-COPY package.json .
-
-# Install Python and build-essential tools
-RUN apt-get update && apt-get install -y python3 make g++ && rm -rf /var/lib/apt/lists/*
-
-RUN bun install
-
+# Set working directory
 WORKDIR /app
 
-COPY index.ts .
-COPY tsconfig.json .
-COPY public public
-COPY schemas schemas
-COPY views views
+# Copy package.json
+COPY package.json ./
 
-ENV NODE_ENV=production
-CMD ["bun", "index.ts"]
+# Install dependencies
+RUN bun install
 
+# Copy the rest of the application code
+COPY . .
+
+# Expose the application port
 EXPOSE 3000
+
+# Start the application
+CMD ["bun", "run", "start"]
