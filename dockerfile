@@ -1,16 +1,27 @@
-# 1. Use the official Bun image
+# 1. Use official Bun image
 FROM oven/bun:latest
 
-# 2. Set working directory inside the container
-WORKDIR /
+# 2. Install system dependencies for native module builds
+RUN apt-get update && apt-get install -y \
+  python3 \
+  build-essential \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
 
-# 3. Copy only package.json and bun.lock first to leverage Docker’s layer cache
-COPY package.json ./
+# 3. Set working directory
+WORKDIR /app
 
-# 4. Install dependencies via Bun
+# 4. Copy only package files first (for Docker cache)
+COPY package.json bun.lockb* ./
+
+# 5. Install dependencies
 RUN bun install
+
+# 6. Copy the rest of the app
 COPY . .
+
+# 7. Expose app port
 EXPOSE 3000
 
-# 9. Default command: run your app via Bun.
+# 8. Start the app
 CMD ["bun", "run", "start"]
