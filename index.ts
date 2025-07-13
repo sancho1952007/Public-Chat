@@ -22,7 +22,7 @@ let QwenAIClient: { predict: (arg0: string, arg1: { query: any; history: never[]
     // Have to dynamically load the module as it causes some kind of error in typescript (ts-node)
     const dynamic = new Function('modulePath', 'return import(modulePath)');
     const { Client } = await dynamic('@gradio/client');
-    QwenAIClient = await Client.connect("Qwen/Qwen2.5-72B-Instruct");
+    QwenAIClient = await Client.connect("Qwen/Qwen2-72B-Instruct");
 })();
 
 // Load Chat Database Model

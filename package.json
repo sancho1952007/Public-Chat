@@ -5,24 +5,24 @@
     "start": "bun index.ts"
   },
   "dependencies": {
-    "@gradio/client": "^1.15.1",
-    "@types/express": "^4.17.22",
+    "@gradio/client": "^1.15.5",
+    "@types/express": "^4.17.23",
     "cookie": "^0.6.0",
     "cookie-parser": "^1.4.7",
-    "dotenv": "^16.5.0",
+    "dotenv": "^16.6.1",
     "ejs": "^3.1.10",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.15.1",
+    "mongoose": "^8.16.3",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
-    "serve-favicon": "^2.5.0",
+    "serve-favicon": "^2.5.1",
     "socket.io": "^4.8.1"
   },
   "devDependencies": {
-    "@types/cookie-parser": "^1.4.8",
-    "@types/jsonwebtoken": "^9.0.9",
-    "@types/node": "^22.15.29",
+    "@types/cookie-parser": "^1.4.9",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^22.16.3",
     "@types/passport": "^1.0.17",
     "@types/passport-google-oauth20": "^2.0.16",
     "@types/serve-favicon": "^2.5.7"
