@@ -1,20 +1,20 @@
 # Use the official Bun image
-FROM oven/bun:latest
+FROM oven/bun:1.2.19
 
-# Set working directory
+# Set the working directory
 WORKDIR /app
 
-# Copy package.json
+# Copy dependency files first (for better cache usage)
 COPY package.json ./
 
 # Install dependencies
-RUN bun install
+RUN bun install --frozen-lockfile
 
-# Copy the rest of the application code
+# Copy the rest of the application
 COPY . .
 
-# Expose the application port
+# Expose app port (make sure this matches your server)
 EXPOSE 3000
 
-# Start the application
-CMD ["bun", "run", "start"]
+# Run the production script
+CMD ["bun", "run", "prod"]
