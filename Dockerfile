@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 3000
 
 # Run the production script
-CMD ["bun", "run", "prod"]
+CMD ["bun", "start"]
