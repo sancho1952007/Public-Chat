@@ -319,12 +319,12 @@ app.get('/auth/google/cb', passport.authenticate('google', { session: false }),
                 ProfanityDetection = await QwenAIClient.predict("/model_chat", {
                     query: user._json.name,
                     history: [],
-                    system: `Check if the below name contains profanity/threat. If it does, reply with a "yes" and if it doesn't, reply with a "no" only.`,
+                    system: `Check if the below name contains profanity/threat. If it does, reply with a "yes" and if it doesn't, reply with a "no" only. Do not include any extra things including but not limited to symbols, full stops, etc.`,
                 });
 
                 try {
                     if (ProfanityDetection.data != null) {
-                        if (ProfanityDetection.data[1][0][1].toLowerCase() == 'no') {
+                        if (ProfanityDetection.data[1][0][1].toLowerCase().includes('no')) {
                             // Set session cookie
                             res.cookie('session', JWT.sign({
                                 id: crypto.createHash('sha256').update(ENV.EMAIL_SECRET_0 + user._json.email + ENV.EMAIL_SECRET_1).digest('hex'),
@@ -347,12 +347,12 @@ app.get('/auth/google/cb', passport.authenticate('google', { session: false }),
                             res.send('<script>window.close();</script>');
 
                             // Check for URL entered sneakily in the name
-                        } else if (ProfanityDetection.data[1][0][1].toLowerCase() == 'url') {
+                        } else if (ProfanityDetection.data[1][0][1].toLowerCase().includes('url')) {
                             res.send('<script>alert("Please Refrain From Entering URLs!\nPlease contact, contact@sg-app.com if you think this is a mistake.");window.close();</script>');
                         }
 
                         // Check for profanity in the name
-                        else if (ProfanityDetection.data[1][0][1].toLowerCase() == 'yes') {
+                        else if (ProfanityDetection.data[1][0][1].toLowerCase().includes('yes')) {
                             res.send('<script>alert("Your Google Account Name Consists Of Profane Words/Threats.\nPlease contact, contact@sg-app.com if you think this is a mistake.");window.close();</script>')
                         }
                         // Handle any invalid reponse
