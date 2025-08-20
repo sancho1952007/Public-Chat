@@ -1,7 +1,7 @@
-# Use the official Bun image
+# Using the official Bun image
 FROM oven/bun:1.2.19
 
-# Set the working directory
+# Setting the working directory
 WORKDIR /app
 
 # Copy dependency files first (for better cache usage)
@@ -13,8 +13,20 @@ RUN bun install --frozen-lockfile
 # Copy the rest of the application
 COPY . .
 
-# Expose app port (make sure this matches your server)
+# Run the production script
+# CMD ["bun", "start"]
+
+# Build a binary since it's recommended in production
+RUN bun build \
+  --compile \
+  --minify-whitespace \
+  --minify-syntax \
+  --target bun \
+  --outfile server \
+  ./index.ts
+
+# Expose app port
 EXPOSE 3000
 
-# Run the production script
-CMD ["bun", "start"]
+# Run the built binary
+CMD ["./server"]
