@@ -13,16 +13,17 @@
     "ejs": "^3.1.10",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.17.2",
+    "mongoose": "^8.18.0",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "serve-favicon": "^2.5.1",
     "socket.io": "^4.8.1"
   },
   "devDependencies": {
+    "@types/bun": "^1.2.21",
     "@types/cookie-parser": "^1.4.9",
     "@types/jsonwebtoken": "^9.0.10",
-    "@types/node": "^22.17.2",
+    "@types/node": "^22.18.0",
     "@types/passport": "^1.0.17",
     "@types/passport-google-oauth20": "^2.0.16",
     "@types/serve-favicon": "^2.5.7"

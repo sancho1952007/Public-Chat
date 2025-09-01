@@ -18,12 +18,12 @@ COPY . .
 
 # Build a binary since it's recommended in production
 RUN bun build \
-  --compile \
-  --minify-whitespace \
-  --minify-syntax \
-  --target bun \
-  --outfile server \
-  ./index.ts
+    --compile \
+    --minify-whitespace \
+    --minify-syntax \
+    --target bun \
+    --outfile server \
+    ./index.ts
 
 # Expose app port
 EXPOSE 3000

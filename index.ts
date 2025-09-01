@@ -12,18 +12,13 @@ import { Server } from 'socket.io';
 import favicon from 'serve-favicon';
 import cookieParser from 'cookie-parser';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import { Client } from '@gradio/client';
 
 // Load environment variables
 dotenv.config();
 
 // Connect to Qwen AI client (powered by hugging face) for profanity detection
-let QwenAIClient: { predict: (arg0: string, arg1: { query: any; history: never[]; system: string; }) => any; };
-(async () => {
-    // Have to dynamically load the module as it causes some kind of error in typescript (ts-node)
-    const dynamic = new Function('modulePath', 'return import(modulePath)');
-    const { Client } = await dynamic('@gradio/client');
-    QwenAIClient = await Client.connect("Qwen/Qwen2-72B-Instruct");
-})();
+const QwenAIClient = await Client.connect("Qwen/Qwen2-72B-Instruct");
 
 // Load Chat Database Model
 import Chat from './schemas/chat';
@@ -121,7 +116,7 @@ io.on('connection', async (socket) => {
                         if (ProfanityDetection.data[1][0][1].toLowerCase() == 'no') {
                             // Aquire timestamp of the sent message
                             const ts = new Date().toISOString();
-                            const extras = [];
+                            const extras: string[] = [];
 
                             // Check if messager is verified so that a badge of authenticity can be displayed
                             if (Verified_Users_List.includes(user.email)) {
