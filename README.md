@@ -1,6 +1,5 @@
 # Public Chat
-Created with ❤️ by [Sancho Godinho](https://sancho1952007.github.io) at [SG Apps](https://sg-app.com)
-<br><br>
+![](images/screenshot.png)
 
 ### About  
 Public Chat is a completely free and open source app which connects the whole world on a single topic in a common chat.
@@ -34,4 +33,7 @@ Currently our verification system is only for people who are likely to be impers
 <br><br>
 
 ### Credits:
-Icons provided by [Icons8](https://icons8.com/)
+Icons provided by [Icons8](https://icons8.com/)  
+<br/>
+
+Created with ❤️ by [Sancho Godinho](https://sancho1952007.github.io) at [SG Apps](https://sg-app.com)
