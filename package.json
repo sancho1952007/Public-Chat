@@ -1,8 +1,10 @@
 {
   "scripts": {
-    "dev": "bun --watch index.ts",
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "web": "loophole http 3000 --hostname public-chat",
-    "start": "bun index.ts"
+    "build": "tsc",
+    "copy": "cp -R public dist/ && cp -R views dist/",
+    "start": "node dist/index.js"
   },
   "dependencies": {
     "@gradio/client": "^1.17.1",
@@ -20,7 +22,6 @@
     "socket.io": "^4.8.1"
   },
   "devDependencies": {
-    "@types/bun": "^1.2.21",
     "@types/cookie-parser": "^1.4.9",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^22.18.0",
