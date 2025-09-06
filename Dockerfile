@@ -1,32 +1,20 @@
-# Using the official Bun image
-FROM oven/bun:1.2.19
+# Use official Node.js image
+FROM node:22-alpine
 
-# Setting the working directory
+# Set working directory
 WORKDIR /app
 
-# Copy dependency files first (for better cache usage)
-COPY package.json ./
+# Copy dependency files first
+COPY package*.json ./
 
-# Install dependencies
-RUN bun install --frozen-lockfile
+# Install dependencies (prod only if you don’t need dev deps)
+RUN npm ci --omit=dev
 
-# Copy the rest of the application
+# Copy the rest of the source
 COPY . .
-
-# Run the production script
-# CMD ["bun", "start"]
-
-# Build a binary since it's recommended in production
-RUN bun build \
-    --compile \
-    --minify-whitespace \
-    --minify-syntax \
-    --target bun \
-    --outfile server \
-    ./index.ts
 
 # Expose app port
 EXPOSE 3000
 
-# Run the built binary
-CMD ["./server"]
+# Start the backend
+CMD ["node", "index.ts"]
