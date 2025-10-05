@@ -1,4 +1,4 @@
-# Public Chat
+# Public Chat (Temporarily Discontinued)
 ![](images/screenshot.png)
 
 ### About  
